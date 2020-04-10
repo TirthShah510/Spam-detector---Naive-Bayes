@@ -5,10 +5,10 @@ import re
 import os
 
 
-def ham_wordcount():
-    path = "../src/train/train_ham/"
+def wordcount(path):
+
     dir = os.listdir(path)
-    dict_ham = {}
+    dict = {}
 
     for i in dir:
 
@@ -21,40 +21,18 @@ def ham_wordcount():
         words = re.split('[^a-zA-Z]+', l)
 
         for word in words:
-            if word not in dict_ham.keys():
-                dict_ham[word] = 1
+            if word not in dict.keys():
+                dict[word] = 1
             else:
-                dict_ham[word] += 1
+                dict[word] += 1
 
-    return dict_ham
+    return dict
 
-def spam_wordcount():
-    path = "../src/train/train_spam/"
-    dir = os.listdir(path)
-    dict_spam = {}
-
-    for i in dir:
-
-        file = open(path + i)
-
-        l = file.read()
-        l = l.lower()
-        # print(l)
-
-        words = re.split('[^a-zA-Z]+', l)
-
-        for word in words:
-            if word not in dict_spam.keys():
-                dict_spam[word] = 1
-            else:
-                dict_spam[word] += 1
-
-    return dict_spam
 
 def main():
 
-    dict_ham = ham_wordcount()
-    dict_spam = spam_wordcount()
+    dict_ham = wordcount("../src/train/train_ham/")
+    dict_spam = wordcount("../src/train/train_spam/")
 
     print(dict_ham)
     print(dict_spam)
