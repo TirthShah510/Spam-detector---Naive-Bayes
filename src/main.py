@@ -9,13 +9,13 @@ def wordcount(path):
 
     dir = os.listdir(path)
     dict = {}
-
+    dict_sorted = {}
     for i in dir:
 
         file = open(path + i)
 
         l = file.read()
-        l = l.lower()
+        l = l.lower().strip()
         # print(l)
 
         words = re.split('[^a-zA-Z]+', l)
@@ -26,7 +26,9 @@ def wordcount(path):
             else:
                 dict[word] += 1
 
-    return dict
+        for key in sorted(dict.keys()):
+            dict_sorted[key] = dict[key]
+    return dict_sorted
 
 
 def main():
