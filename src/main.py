@@ -118,16 +118,45 @@ def training():
 
     return model
 
+
 def testing(model):
 
+    dir = os.listdir("../src/test/")
+    ansfile = open("Model_ans.txt", "w")
+    testing_words = {}
 
+    for i in dir:
 
+        p_ham = math.log((1000 / 1997), 10)
+        p_spam = math.log((997 / 1997), 10)
+        file = open("../src/test/" + i)
+        l = file.read().lower()
 
+        words = re.split(r'[^a-zA-Z]', l)
 
+        for word in words:
+            testing_words[word] = 1
 
+        for key in testing_words.keys():
 
+            if key in model:
+                p_ham = p_ham + math.log(model[key][0], 10)
+                p_spam = p_spam + math.log(model[key][1], 10)
+
+        if p_ham >= p_spam:
+            ans = "ham"
+        else:
+            ans = "spam"
+
+        file.close()
+
+        ansfile.write(str(i) + "  " + str(p_ham) + "  " + str(p_spam) + "  " + ans + "\n")
+    print("Testing")
 
 
 def main():
     model = training()
     testing(model)
+
+
+main()
