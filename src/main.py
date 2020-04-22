@@ -120,9 +120,8 @@ def training():
 
 
 def testing(model):
-
     dir = os.listdir("../src/test/")
-    ansfile = open("Model_ans.txt", "w")
+    ansfile = open("Model_ans.txt", "w",encoding="Latin-1")
     testing_words = {}
 
     for i in dir:
@@ -130,7 +129,8 @@ def testing(model):
         p_ham = math.log((1000 / 1997), 10)
         p_spam = math.log((997 / 1997), 10)
         file = open("../src/test/" + i)
-        l = file.read().lower()
+        l = file.read()
+        l = l.lower().strip()
 
         words = re.split(r'[^a-zA-Z]', l)
 
@@ -148,7 +148,6 @@ def testing(model):
         else:
             ans = "spam"
 
-        file.close()
 
         ansfile.write(str(i) + "  " + str(p_ham) + "  " + str(p_spam) + "  " + ans + "\n")
     print("Testing")
