@@ -121,7 +121,7 @@ def training():
 
 def testing(model):
     dir = os.listdir("../src/test/")
-    ansfile = open("Model_ans.txt", "w",encoding="Latin-1")
+    ansfile = open("Model_ans.txt", "w", encoding="Latin-1")
     testing_words = {}
 
     for i in dir:
@@ -135,18 +135,24 @@ def testing(model):
         words = re.split(r'[^a-zA-Z]', l)
 
         for word in words:
-            testing_words[word] = 1
+            if word not in testing_words:
+                testing_words[word] = 1
+            else:
+                testing_words[word] += 1
 
         for key in testing_words.keys():
 
             if key in model:
-                p_ham = p_ham + math.log(model[key][0], 10)
-                p_spam = p_spam + math.log(model[key][1], 10)
+                for word_count in range(testing_words[key]):
+                    p_ham = p_ham + math.log(model[key][0], 10)
+                    p_spam = p_spam + math.log(model[key][1], 10)
 
         if p_ham >= p_spam:
             ans = "ham"
         else:
             ans = "spam"
+
+        file_name = str(i)
 
 
         ansfile.write(str(i) + "  " + str(p_ham) + "  " + str(p_spam) + "  " + ans + "\n")
@@ -154,6 +160,7 @@ def testing(model):
 
 
 def main():
+
     model = training()
     testing(model)
 
