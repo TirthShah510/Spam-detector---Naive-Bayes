@@ -187,8 +187,8 @@ def testing(model):
 
 
 def plotConfusionMatrix(spamSpam, spamHam, hamHam, hamSpam):
-    conf_arr = np.array([[spamSpam, spamHam],
-                         [hamSpam, hamHam]])
+    conf_arr = np.array([[hamHam, spamHam],
+                         [hamSpam, spamSpam]])
     # print(str(hamHam) + " " + str(spamHam) + " " + str(hamSpam) + " " + str(spamSpam))
     norm_conf = []
     for i in conf_arr:
@@ -211,8 +211,10 @@ def plotConfusionMatrix(spamSpam, spamHam, hamHam, hamSpam):
                         horizontalalignment='center',
                         verticalalignment='center')
     cb = fig.colorbar(res)
-    plt.xticks(np.arange(width), ("spam", "ham"))
-    plt.yticks(np.arange(height), ("spam", "ham"))
+    plt.xticks(np.arange(width), ("ham", "spam"))
+    plt.yticks(np.arange(height), ("ham", "spam"))
+    plt.xlabel("Actual Output")
+    plt.ylabel("Model Output")
     plt.savefig('confusion_matrix.png', format='png')
 
 
