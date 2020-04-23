@@ -173,6 +173,15 @@ def testing(model):
 
         ansfile.write(str(i) + "  " + str(p_ham) + "  " + str(p_spam) + "  " + ans + "\n")
 
+        evaluationfile = open("evaluation.txt", "w")
+
+        precision = hamHam / (hamHam + spamHam)
+        recall = hamHam / (hamHam + hamSpam)
+        accuracy = (hamHam + spamSpam) / (hamHam + spamSpam + spamHam + hamSpam)
+
+        evaluationfile.write(
+            "Precision = " + str(precision) + "  Recall = " + str(recall) + "  Accuracy = " + str(accuracy))
+
     plotConfusionMatrix(spamSpam, spamHam, hamHam, hamSpam)
     print("Testing")
 
@@ -180,6 +189,7 @@ def testing(model):
 def plotConfusionMatrix(spamSpam, spamHam, hamHam, hamSpam):
     conf_arr = np.array([[spamSpam, spamHam],
                          [hamSpam, hamHam]])
+    # print(str(hamHam) + " " + str(spamHam) + " " + str(hamSpam) + " " + str(spamSpam))
     norm_conf = []
     for i in conf_arr:
         a = 0
