@@ -28,7 +28,14 @@ def wordcount(path):
             else:
                 dict[word] += 1
 
+
+
     del dict[""]
+
+    # Added smoothing
+    for key in dict.keys():
+        dict[key] = dict[key] + 0.5
+
     for value in dict.values():
         totalwords += value
 
@@ -77,9 +84,9 @@ def compute_model(final_dict, spamwords, hamwords):
         # print(final_dict[key][1])
 
         string = str(i) + "  " + key + "  " + str(final_dict[key][1]) + "  " \
-                 + str((final_dict[key][1] + 1) / (hamwords + vocabulary)) \
+                 + str((final_dict[key][1]) / hamwords) \
                  + "  " + str(final_dict[key][0]) + "  " \
-                 + str((final_dict[key][0] + 1) / (spamwords + vocabulary)) + "\n"
+                 + str((final_dict[key][0]) / spamwords) + "\n"
         file.write(string)
 
         # Creating the model(ham,spam)
@@ -121,7 +128,7 @@ def training():
 
 def testing(model):
     dir = os.listdir("../src/test/")
-    ansfile = open("Model_ans.txt", "w",encoding="Latin-1")
+    ansfile = open("Model_ans.txt", "w")
     testing_words = {}
 
     for i in dir:
@@ -134,12 +141,12 @@ def testing(model):
 
         words = re.split(r'[^a-zA-Z]', l)
 
-        for word in words:
-            testing_words[word] = 1
+        # for word in words:
+        #     testing_words[word] = 1
 
-        for key in testing_words.keys():
+        for key in words:
 
-            if key in model:
+            if key in model.keys():
                 p_ham = p_ham + math.log(model[key][0], 10)
                 p_spam = p_spam + math.log(model[key][1], 10)
 
