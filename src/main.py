@@ -1,9 +1,9 @@
-import matplotlib as plot
 import numpy as np
 import sys
 import math
 import re
 import os
+import matplotlib.pyplot as plt
 
 
 def wordcount(path):
@@ -14,7 +14,7 @@ def wordcount(path):
 
     for i in dir:
 
-        file = open(path + i)
+        file = open(path + i, encoding="ISO-8859-1")
 
         l = file.read()
         l = l.lower().strip()
@@ -27,8 +27,6 @@ def wordcount(path):
                 dict[word] = 1
             else:
                 dict[word] += 1
-
-
 
     del dict[""]
 
@@ -77,7 +75,7 @@ def merge_dictionary(dictspam, dictham):
 def compute_model(final_dict, spamwords, hamwords):
     model = {}
     vocabulary = len(final_dict)
-    file = open("ans.txt", 'w')
+    file = open("ans.txt", 'w', encoding="ISO-8859-1")
     i = 1
     for key in final_dict.keys():
         # print(str(final_dict[key][0] + 1) + "As" + str((final_dict[key][0] + 1) / (spamwords + vocabulary)))
@@ -104,7 +102,7 @@ def training():
     dict_spam, spamwords = wordcount("../src/train/train_spam/")
 
     print("Ham")
-    f = open("ham.txt", 'w')
+    f = open("ham.txt", 'w', encoding="ISO-8859-1")
     for i in dict_ham.keys():
         f.write(i + ":" + str(dict_ham[i]) + "\n")
     print("Spam")
@@ -131,11 +129,21 @@ def testing(model):
     ansfile = open("Model_ans.txt", "w")
     testing_words = {}
 
+    spamHam = 0  # count of Spam misclassified into  Ham
+    hamSpam = 0  # count of Ham misclassified into  Spam
+    spamSpam = 0  # count of Spam correctly classified into Spam
+    hamHam = 0  # count of Ham correctly Classified into Ham
+
     for i in dir:
+
+        if "ham" in i:
+            fileType = "ham"
+        else:
+            fileType = "spam"
 
         p_ham = math.log((1000 / 1997), 10)
         p_spam = math.log((997 / 1997), 10)
-        file = open("../src/test/" + i)
+        file = open("../src/test/" + i, encoding="ISO-8859-1")
         l = file.read()
         l = l.lower().strip()
 
@@ -152,12 +160,50 @@ def testing(model):
 
         if p_ham >= p_spam:
             ans = "ham"
+            if fileType is ans:
+                hamHam += 1
+            else:
+                spamHam += 1
         else:
             ans = "spam"
-
+            if fileType is "spam":
+                spamSpam += 1
+            else:
+                hamSpam += 1
 
         ansfile.write(str(i) + "  " + str(p_ham) + "  " + str(p_spam) + "  " + ans + "\n")
+
+    plotConfusionMatrix(spamSpam, spamHam, hamHam, hamSpam)
     print("Testing")
+
+
+def plotConfusionMatrix(spamSpam, spamHam, hamHam, hamSpam):
+    conf_arr = np.array([[spamSpam, spamHam],
+                         [hamSpam, hamHam]])
+    norm_conf = []
+    for i in conf_arr:
+        a = 0
+        tmp_arr = []
+        a = sum(i, 0)
+        for j in i:
+            tmp_arr.append(float(j) / float(a))
+        norm_conf.append(tmp_arr)
+    fig = plt.figure()
+    plt.clf()
+    ax = fig.add_subplot(111)
+    ax.set_aspect(1)
+    res = ax.imshow(np.array(norm_conf), cmap=plt.cm.jet,
+                    interpolation='nearest')
+    width, height = conf_arr.shape
+    for x in range(width):
+        for y in range(height):
+            ax.annotate(str(conf_arr[x][y]), xy=(y, x),
+                        horizontalalignment='center',
+                        verticalalignment='center')
+    cb = fig.colorbar(res)
+    plt.xticks(np.arange(width), ("spam", "ham"))
+    plt.yticks(np.arange(height), ("spam", "ham"))
+    plt.savefig('confusion_matrix.png', format='png')
 
 
 def main():
