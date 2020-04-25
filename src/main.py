@@ -7,34 +7,61 @@ import matplotlib.pyplot as plt
 
 def wordCount(path):
     dir = os.listdir(path)
-    dict = {}
-    sortedDict = {}
-    totalWords = 0
+    dictHam = {}
+    dictSpam = {}
+    sortedHamDict = {}
+    sortedSpamDict = {}
+    totalHamWords = 0
+    totalSpamWords = 0
 
     for i in dir:
+        if "ham" in i:
 
-        file = open(path + i, encoding="ISO-8859-1")
+            fileHam = open(path + i, encoding="ISO-8859-1")
 
-        l = file.read()
-        l = l.lower().strip()
+            lHam = fileHam.read()
+            lHam = lHam.lower().strip()
 
-        words = re.split(r'[^a-zA-Z]', l)
+            wordsHam = re.split(r'[^a-zA-Z]', lHam)
 
-        for word in words:
-            if word.strip() not in dict.keys():
-                dict[word] = 1
-            else:
-                dict[word] += 1
+            for word in wordsHam:
+                if word.strip() not in dictHam.keys():
+                    dictHam[word] = 1
+                else:
+                    dictHam[word] += 1
+        else:
 
-    del dict[""]
+            fileSpam = open(path + i, encoding="ISO-8859-1")
 
-    for value in dict.values():
-        totalWords += value
+            lSpam = fileSpam.read()
+            lSpam = lSpam.lower().strip()
 
-    for key in sorted(dict.keys()):
-        sortedDict[key] = dict[key]
+            wordsSpam = re.split(r'[^a-zA-Z]', lSpam)
 
-    return sortedDict, totalWords
+            for word in wordsSpam:
+                if word.strip() not in dictSpam.keys():
+                    dictSpam[word] = 1
+                else:
+                    dictSpam[word] += 1
+
+    del dictHam[""]
+    del dictSpam[""]
+
+    for value in dictHam.values():
+        totalHamWords += value
+
+    for value in dictSpam.values():
+        totalSpamWords += value
+
+    for key in sorted(dictHam.keys()):
+        sortedHamDict[key] = dictHam[key]
+
+    for key in sorted(dictSpam.keys()):
+        sortedSpamDict[key] = dictSpam[key]
+
+    fileHam.close()
+    fileSpam.close()
+    return sortedHamDict, totalHamWords, sortedSpamDict, totalSpamWords
 
 
 def mergeDictionary(spamDict, hamDict):
@@ -91,8 +118,8 @@ def computeModel(finalDict, spamWords, hamWords):
 
 
 def training():
-    hamDict, hamWords = wordCount("../src/train/train_ham/")
-    spamDict, spamWords = wordCount("../src/train/train_spam/")
+    hamDict, hamWords, spamDict, spamWords = wordCount("../src/train/")
+    #spamDict, spamWords = wordCount("../src/train/train_spam/")
 
     hamWordFrequencyFile = open("HamWordFrequency.txt", 'w', encoding="ISO-8859-1")
     for i in hamDict.keys():
