@@ -96,6 +96,7 @@ def computeModel(finalDict, spamWords, hamWords):
     model = {}
     vocabulary = len(finalDict)
 
+    # Format of File-> Same as given in project description
     modelFile = open("Model.txt", 'w', encoding="ISO-8859-1")
     i = 1
     for key in finalDict.keys():
@@ -131,6 +132,7 @@ def training():
     model = mergeDictionary(spamDict, hamDict)
     hamAndSpamWordFrequencyFile = open("HamAndSpamWordFrequency.txt", 'w')
     for i in model.keys():
+        # Formate of File->  Word:[Frequency Count in Spam, Frequency Count in Ham]
         hamAndSpamWordFrequencyFile.write(i + ":" + str(model[i]) + "\n")
 
     model = computeModel(model, spamWords, hamWords)
@@ -143,7 +145,9 @@ def training():
 
 
 def testing(model):
+
     dir = os.listdir("../src/test/")
+    # Formate for File-> Same as given in project description
     resultFile = open("Result.txt", "w")
     lineCounter = 1
 
