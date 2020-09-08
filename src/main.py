@@ -147,6 +147,7 @@ def training():
 def testing(model):
 
     dir = os.listdir("../src/test/")
+
     # Formate for File-> Same as given in project description
     resultFile = open("Result.txt", "w")
     lineCounter = 1
@@ -155,7 +156,7 @@ def testing(model):
     hamSpam = 0  # count of Ham misclassified into  Spam
     spamSpam = 0  # count of Spam correctly classified into Spam
     hamHam = 0  # count of Ham correctly Classified into Ham
-
+    
     for i in dir:
         if "ham" in i:
             fileType = "ham"
@@ -169,6 +170,7 @@ def testing(model):
         l = l.lower().strip()
 
         words = re.split(r'[^a-zA-Z]', l)
+
 
         for key in words:
             if key in model.keys():
@@ -185,6 +187,7 @@ def testing(model):
                 spamHam += 1
         else:
             ans = "spam"
+            
             if fileType is "spam":
                 spamSpam += 1
                 resultLabel = "right"
